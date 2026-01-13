@@ -73,12 +73,26 @@ body {
 .logo-main {
     font-size: 3.8rem;
     font-weight: 900;
-    letter-spacing: -4px;
-    margin-bottom: 8px;
-    background: linear-gradient(135deg, #fff, var(--p));
+    letter-spacing: -3px;
+    margin-bottom: 10px;
+    text-align: center;
+
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #e9d5ff 35%,
+        #a78bfa 70%,
+        #7c3aed 100%
+    );
+
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 2px 10px rgba(167,139,250,0.25),
+        0 0 40px rgba(167,139,250,0.15);
 }
+
 
 .logo-sm {
     font-size: 1.6rem;
@@ -277,3 +291,4 @@ textarea {
     from { box-shadow: 0 0 0 rgba(167,139,250,0.3); }
     to { box-shadow: 0 0 25px rgba(167,139,250,0.45); }
 }
+
