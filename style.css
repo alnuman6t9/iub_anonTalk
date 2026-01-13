@@ -1,19 +1,162 @@
-:root { --p: #8b5cf6; --bg: #030305; --card: rgba(20, 20, 25, 0.8); --brd: rgba(255, 255, 255, 0.08); }
-body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; }
-.auth-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-.auth-box { padding: 40px; text-align: center; width: 100%; max-width: 350px; }
-.auth-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid var(--brd); color: #fff; border-radius: 8px; box-sizing: border-box; }
-.glow { position: fixed; top: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -10%, rgba(139, 92, 246, 0.15), transparent); z-index: -1; }
-.container { max-width: 600px; margin: auto; padding: 40px 20px; }
-.logo { font-size: 2.5rem; font-weight: 900; text-align: center; background: linear-gradient(#fff, var(--p)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
-.glass-card { background: var(--card); border: 1px solid var(--brd); border-radius: 20px; padding: 20px; backdrop-filter: blur(20px); }
-textarea { width: 100%; height: 100px; background: 0; border: 0; color: #fff; font-size: 1.1rem; outline: 0; resize: none; font-family: inherit; }
-.card-ft { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--brd); padding-top: 15px; }
-button { background: #fff; color: #000; border: 0; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
-.tabs { display: flex; gap: 5px; margin: 30px 0; background: var(--card); padding: 5px; border-radius: 15px; }
-.t-btn { flex: 1; background: 0; border: 0; color: #777; padding: 10px; cursor: pointer; border-radius: 10px; }
-.t-btn.active { background: var(--p); color: #fff; }
-.notif-container { background: rgba(139, 92, 246, 0.1); border: 1px solid var(--p); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
-.post { background: var(--card); border: 1px solid var(--brd); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-.actions { display: flex; gap: 15px; margin-top: 15px; font-size: 0.8rem; color: #777; }
-.reply { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; margin-top: 5px; font-size: 0.9rem; }
+:root {
+    --p: #a78bfa; /* Vibrant Violet */
+    --bg: #020204;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-heavy: rgba(255, 255, 255, 0.07);
+    --silk-border: rgba(255, 255, 255, 0.12);
+    --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+body {
+    background: var(--bg);
+    color: #f8fafc;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0, transparent 50%);
+}
+
+.glow {
+    position: fixed;
+    top: -10%;
+    left: 50%;
+    width: 60%;
+    height: 40%;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 60px 20px;
+}
+
+.logo {
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -4px;
+    margin-bottom: 50px;
+    background: linear-gradient(180deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 10px rgba(0,0,0,0.5));
+}
+
+/* The Glossy Card */
+.glass-card {
+    background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.01));
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--silk-border);
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glossy Surface Reflection Effect */
+.glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.25rem;
+    outline: none;
+    resize: none;
+    min-height: 120px;
+    font-weight: 300;
+}
+
+button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(167, 139, 250, 0.4);
+    background: var(--p);
+    color: #fff;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin: 40px 0;
+    background: rgba(255,255,255,0.02);
+    padding: 6px;
+    border-radius: 18px;
+    border: 1px solid var(--silk-border);
+}
+
+.t-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.t-btn.active {
+    background: var(--glass-heavy);
+    color: #fff;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+}
+
+/* Post Styling */
+.post {
+    background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--silk-border);
+    border-radius: 28px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.post:hover {
+    transform: scale(1.01);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.reply {
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 18px;
+    margin-top: 12px;
+    font-size: 0.95rem;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.notif-container {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+}
