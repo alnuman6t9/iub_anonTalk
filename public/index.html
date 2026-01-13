@@ -1,19 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AnonTalk</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOID | IUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #a78bfa; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 500px; margin: auto; padding: 40px 20px; }
+        .logo { font-size: 3rem; font-weight: 900; letter-spacing: -3px; text-align: center; margin-bottom: 10px; background: linear-gradient(#fff, #555); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 10px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 15px; border-radius: 12px; border: 0; font-weight: 800; cursor: pointer; background: #fff; transition: 0.3s; }
+        button:hover { background: var(--p); color: #fff; }
+        .post { margin-top: 25px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .reply-box { margin-top: 15px; padding-left: 15px; border-left: 2px solid var(--p); color: #888; font-size: 0.9rem; }
+        /* Notification Toast */
+        #notif { position: fixed; bottom: 20px; right: 20px; background: var(--p); color: #000; padding: 15px 25px; border-radius: 50px; font-weight: 800; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(167,139,250,0.4); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { from { transform: scale(0.5) translateY(50px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+    </style>
 </head>
 <body>
+    <div id="notif">New Reply in the Void! 🌌</div>
 
-<div class="card">
-  <h1>AnonTalk</h1>
-  <p>IUB students only</p>
+    <div id="login-screen" class="overlay">
+        <div class="glass" style="padding: 40px; width: 320px;">
+            <div class="logo">VOID</div>
+            <p style="text-align:center; color:#555; font-size:0.8rem; margin-bottom:20px;">Enter your IUB email to proceed</p>
+            <input type="email" id="email" placeholder="student@iub.edu.bd">
+            <button onclick="login()">Enter</button>
+        </div>
+    </div>
 
-  <input id="email" placeholder="student@iub.edu.bd">
-  <button onclick="login()">Enter Anonymously</button>
-</div>
+    <div id="main-app" class="container" style="display:none">
+        <div class="logo" style="font-size: 1.5rem; text-align: left;">VOID</div>
+        <div class="glass" style="padding: 20px;">
+            <textarea id="post-input" placeholder="What's the tea at IUB?"></textarea>
+            <button onclick="createPost()">Post Anonymously</button>
+        </div>
+        <div id="feed"></div>
+    </div>
 
-<script src="script.js"></script>
+    <script>
+        // Use a unique ID to track user's posts for notifications
+        let userId = localStorage.getItem('void_user_id') || 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('void_user_id', userId);
+
+        if (localStorage.getItem('void_logged_in')) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            loadFeed();
+        }
+
+        function login() {
+            const email = document.getElementById('email').value.toLowerCase();
+            if (email.endsWith('@iub.edu.bd')) {
+                localStorage.setItem('void_logged_in', 'true');
+                location.reload();
+            } else {
+                alert("Only @iub.edu.bd emails are allowed.");
+            }
+        }
+
+        async function loadFeed() {
+            const res = await fetch('/api/posts');
+            const posts = await res.json();
+            
+            // Notification Logic: Check if any post owned by current user has new replies
+            const myPosts = JSON.parse(localStorage.getItem('my_posts') || '[]');
+            posts.forEach(p => {
+                if (p.author_id === userId) {
+                    const lastSeenCount = localStorage.getItem('replies_' + p.id) || 0;
+                    if (p.replies.length > lastSeenCount) {
+                        showNotification();
+                        localStorage.setItem('replies_' + p.id, p.replies.length);
+                    }
+                }
+            });
+
+            document.getElementById('feed').innerHTML = posts.map(p => `
+                <div class="glass post">
+                    <p style="font-weight:300;">${p.content}</p>
+                    <div style="font-size:0.8rem; color:#444; margin-top:15px;">
+                        <span onclick="like(${p.id})" style="cursor:pointer">♥ ${p.likes}</span> | 
+                        <span onclick="toggleReply(${p.id})" style="cursor:pointer">Reply</span> | 
+                        <span onclick="adminDelete(${p.id})" style="color:#333; cursor:pointer">Admin</span>
+                    </div>
+                    <div id="reply-ui-${p.id}" style="display:none; margin-top:10px;">
+                        <input type="text" id="input-${p.id}" placeholder="Type reply...">
+                        <button onclick="sendReply(${p.id})" style="padding:8px">Reply</button>
+                    </div>
+                    ${p.replies.map(r => `<div class="reply-box">↳ ${r.content}</div>`).join('')}
+                </div>
+            `).join('');
+        }
+
+        function showNotification() {
+            const toast = document.getElementById('notif');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 5000);
+        }
+
+        async function createPost() {
+            const content = document.getElementById('post-input').value;
+            if (!content) return;
+            const res = await fetch('/api/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, authorId: userId })
+            });
+            const newPost = await res.json();
+            
+            // Track this post to know when it gets replies
+            let myPosts = JSON.parse(localStorage.getItem('my_posts') || '[]');
+            myPosts.push(newPost.id);
+            localStorage.setItem('my_posts', JSON.stringify(myPosts));
+            
+            document.getElementById('post-input').value = '';
+            loadFeed();
+        }
+
+        function toggleReply(id) {
+            const el = document.getElementById('reply-ui-' + id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function sendReply(id) {
+            const content = document.getElementById('input-' + id).value;
+            await fetch(`/api/posts/${id}/reply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            loadFeed();
+        }
+
+        async function like(id) {
+            if (localStorage.getItem('liked_' + id)) return;
+            await fetch(`/api/posts/${id}/like`, { method: 'POST' });
+            localStorage.setItem('liked_' + id, 'true');
+            loadFeed();
+        }
+
+        async function adminDelete(id) {
+            const pw = prompt("Admin Password:");
+            const res = await fetch(`/api/posts/${id}`, { method: 'DELETE', headers: { 'adminpw': pw } });
+            if (res.ok) loadFeed(); else alert("Unauthorized");
+        }
+
+        setInterval(loadFeed, 10000); // Auto refresh every 10s
+    </script>
 </body>
 </html>
