@@ -1,0 +1,19 @@
+:root { --p: #8b5cf6; --bg: #030305; --card: rgba(20, 20, 25, 0.8); --brd: rgba(255, 255, 255, 0.08); }
+body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; }
+.auth-overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+.auth-box { padding: 40px; text-align: center; width: 100%; max-width: 350px; }
+.auth-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: #000; border: 1px solid var(--brd); color: #fff; border-radius: 8px; box-sizing: border-box; }
+.glow { position: fixed; top: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -10%, rgba(139, 92, 246, 0.15), transparent); z-index: -1; }
+.container { max-width: 600px; margin: auto; padding: 40px 20px; }
+.logo { font-size: 2.5rem; font-weight: 900; text-align: center; background: linear-gradient(#fff, var(--p)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+.glass-card { background: var(--card); border: 1px solid var(--brd); border-radius: 20px; padding: 20px; backdrop-filter: blur(20px); }
+textarea { width: 100%; height: 100px; background: 0; border: 0; color: #fff; font-size: 1.1rem; outline: 0; resize: none; font-family: inherit; }
+.card-ft { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--brd); padding-top: 15px; }
+button { background: #fff; color: #000; border: 0; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.tabs { display: flex; gap: 5px; margin: 30px 0; background: var(--card); padding: 5px; border-radius: 15px; }
+.t-btn { flex: 1; background: 0; border: 0; color: #777; padding: 10px; cursor: pointer; border-radius: 10px; }
+.t-btn.active { background: var(--p); color: #fff; }
+.notif-container { background: rgba(139, 92, 246, 0.1); border: 1px solid var(--p); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
+.post { background: var(--card); border: 1px solid var(--brd); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+.actions { display: flex; gap: 15px; margin-top: 15px; font-size: 0.8rem; color: #777; }
+.reply { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; margin-top: 5px; font-size: 0.9rem; }
