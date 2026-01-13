@@ -1,80 +1,171 @@
-<style>
-    .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-    .filter-btn { 
-        background: rgba(255,255,255,0.05); border: 1px solid #333; 
-        color: #888; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;
-    }
-    .filter-btn.active { background: var(--p); color: #000; border-color: var(--p); }
-</style>
-
-<div id="app" class="container" style="display:none">
-    <div class="logo" style="font-size: 1.5rem; text-align: left;">AnonTalk</div>
-    
-    <div class="filter-bar">
-        <div class="filter-btn active" onclick="setFilter('recent', this)">Recent</div>
-        <div class="filter-btn" onclick="setFilter('hot', this)">Hot 🔥</div>
-        <div class="filter-btn" onclick="setFilter('old', this)">Old (1h+)</div>
-    </div>
-
-    <div class="glass" style="padding: 20px;">
-        <textarea id="msg" placeholder="Post anonymously..."></textarea>
-        <button onclick="submitPost()">Post</button>
-    </div>
-    <div id="feed"></div>
-</div>
-
-<script>
-    let currentFilter = 'recent';
-
-    function setFilter(type, btn) {
-        currentFilter = type;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        load();
-    }
-
-    async function load() {
-        const res = await fetch(`/api/posts?filter=${currentFilter}`);
-        const posts = await res.json();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IUB anonTalk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #a78bfa; --bg: #030303; --glass: rgba(255,255,255,0.03); }
+        body { background: var(--bg); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; }
+        .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
+        .container { max-width: 500px; margin: auto; padding: 40px 20px; }
+        .logo { font-size: 3rem; font-weight: 800; letter-spacing: -3px; text-align: center; margin-bottom: 20px; background: linear-gradient(#fff, #444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        // 1. NOTIFY LOGIC
-        // We only notify if the post author_id matches the user's uid
-        const myUid = localStorage.getItem('v_uid');
-        posts.forEach(p => {
-            if (p.author_id === myUid) {
-                const lastSeenCount = localStorage.getItem('notif_seen_' + p.id) || 0;
-                if (p.replies.length > lastSeenCount) {
-                    showNotif("Someone replied to your post!");
-                    localStorage.setItem('notif_seen_' + p.id, p.replies.length);
-                }
-            }
-        });
+        /* Filters */
+        .filters { display: flex; gap: 10px; margin-bottom: 25px; justify-content: center; }
+        .f-btn { background: var(--glass); border: 1px solid #222; color: #666; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
+        .f-btn.active { background: var(--p); color: #000; border-color: var(--p); font-weight: 800; }
 
-        renderFeed(posts);
-    }
+        input, textarea { width: 100%; background: #000; border: 1px solid #222; padding: 15px; border-radius: 15px; color: #fff; margin-bottom: 10px; box-sizing: border-box; outline: none; }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: 0; font-weight: 800; cursor: pointer; background: #fff; transition: 0.3s; }
+        .btn:hover { background: var(--p); color: #fff; }
 
-    function showNotif(text) {
-        const n = document.getElementById('notif');
-        n.innerText = text;
-        n.style.display = 'block';
-        setTimeout(() => n.style.display = 'none', 5000);
-    }
+        .post { margin-top: 25px; padding: 25px; position: relative; }
+        .meta { display: flex; gap: 15px; font-size: 0.8rem; color: #444; margin-top: 15px; font-weight: 800; }
+        .meta span { cursor: pointer; transition: 0.2s; }
+        .meta span:hover { color: var(--p); }
+        .del-btn { color: #ff4444 !important; display: none; } /* Hidden by default */
 
-    // 2. DELETE LOGIC (ADMIN)
-    async function del(id) {
-        const pw = prompt("Enter Admin Password:");
-        if (!pw) return;
-        const res = await fetch(`/api/posts/${id}`, {
-            method: 'DELETE',
-            headers: { 'adminpw': pw }
-        });
-        if (res.ok) {
-            alert("Post removed.");
-            load();
-        } else {
-            alert("Wrong Password.");
+        .reply-box { margin-top: 12px; padding-left: 15px; border-left: 2px solid var(--p); color: #888; font-size: 0.9rem; }
+        #notif { position: fixed; bottom: 20px; right: 20px; background: var(--p); color: #000; padding: 15px 25px; border-radius: 50px; font-weight: 800; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(167,139,250,0.3); }
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div id="notif">Someone replied to your post!</div>
+
+    <div id="login-screen" class="overlay">
+        <div class="glass" style="padding: 40px; width: 320px;">
+            <div class="logo">Anon Talk</div>
+            <input type="email" id="email" placeholder="student@iub.edu.bd">
+            <button class="btn" onclick="login()">Enter</button>
+        </div>
+    </div>
+
+    <div id="app" class="container" style="display:none">
+        <div class="logo" style="font-size: 1.5rem; text-align: left;">Anon Talk</div>
+        
+        <div class="filters">
+            <div class="f-btn active" onclick="load('recent', this)">Recent</div>
+            <div class="f-btn" onclick="load('hot', this)">Hot 🔥</div>
+            <div class="f-btn" onclick="load('old', this)">Old</div>
+        </div>
+
+        <div class="glass" style="padding: 20px;">
+            <textarea id="msg" placeholder="Whisper anonymously..."></textarea>
+            <button class="btn" onclick="post()">Post</button>
+        </div>
+        <div id="feed"></div>
+    </div>
+
+    <script>
+        let uid = localStorage.getItem('v_uid') || 'u_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('v_uid', uid);
+        let currentFilter = 'recent';
+
+        // --- ADMIN LOGIN VIA CONSOLE ---
+        // Usage: type adminLogin('your_password') in console
+        window.adminLogin = function(password) {
+            localStorage.setItem('admin_key', password);
+            console.log("Admin mode activated. Refreshing...");
+            location.reload();
+        };
+
+        if (localStorage.getItem('v_auth')) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            load('recent');
         }
-    }
 
-    // (Include the rest of the submitPost, like, and reply functions from before)
-</script>
+        function login() {
+            const m = document.getElementById('email').value.toLowerCase();
+            if (m.endsWith('@iub.edu.bd')) {
+                localStorage.setItem('v_auth', 'true');
+                location.reload();
+            } else alert("IUB Email Only");
+        }
+
+        async function load(filter = currentFilter, btn = null) {
+            currentFilter = filter;
+            if(btn) {
+                document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const res = await fetch(`/api/posts?filter=${filter}`);
+            const posts = await res.json();
+            const isAdmin = localStorage.getItem('admin_key');
+
+            // Notify logic
+            posts.forEach(p => {
+                if (p.author_id === uid) {
+                    const seen = localStorage.getItem('seen_' + p.id) || 0;
+                    if (p.replies.length > seen) {
+                        document.getElementById('notif').style.display = 'block';
+                        localStorage.setItem('seen_' + p.id, p.replies.length);
+                        setTimeout(() => document.getElementById('notif').style.display='none', 5000);
+                    }
+                }
+            });
+
+            document.getElementById('feed').innerHTML = posts.map(p => `
+                <div class="glass post">
+                    <p>${p.content}</p>
+                    <div class="meta">
+                        <span onclick="like(${p.id})">♥ ${p.likes}</span>
+                        <span onclick="showRep(${p.id})">Reply</span>
+                        <span class="del-btn" style="display:${isAdmin?'inline':'none'}" onclick="del(${p.id})">Delete</span>
+                    </div>
+                    <div id="rep-ui-${p.id}" style="display:none; margin-top:15px;">
+                        <input type="text" id="in-${p.id}" placeholder="Your reply...">
+                        <button class="btn" style="padding:8px" onclick="sendRep(${p.id})">Send</button>
+                    </div>
+                    ${p.replies.map(r => `<div class="reply-box">↳ ${r.content}</div>`).join('')}
+                </div>
+            `).join('');
+        }
+
+        async function post() {
+            const content = document.getElementById('msg').value;
+            if(!content) return;
+            await fetch('/api/posts', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ content, authorId: uid })
+            });
+            document.getElementById('msg').value = '';
+            load();
+        }
+
+        function showRep(id) { document.getElementById('rep-ui-'+id).style.display='block'; }
+
+        async function sendRep(id) {
+            const content = document.getElementById('in-'+id).value;
+            await fetch(`/api/posts/${id}/reply`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ content })
+            });
+            load();
+        }
+
+        async function like(id) {
+            if(localStorage.getItem('l_'+id)) return;
+            await fetch(`/api/posts/${id}/like`, { method: 'POST' });
+            localStorage.setItem('l_'+id, 'true');
+            load();
+        }
+
+        async function del(id) {
+            const pw = localStorage.getItem('admin_key');
+            const res = await fetch(`/api/posts/${id}`, {
+                method: 'DELETE',
+                headers: { 'adminpw': pw }
+            });
+            if(res.ok) load(); else alert("Admin session invalid.");
+        }
+
+        setInterval(() => load(currentFilter), 15000);
+    </script>
+</body>
+</html>
