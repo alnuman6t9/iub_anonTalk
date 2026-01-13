@@ -2,46 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOID | IUB Verified</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <title>VOID | IUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="auth-overlay" class="auth-overlay">
+    <div class="mesh-bg"></div>
+
+    <div id="auth-view" class="view auth-overlay">
         <div class="glass-card auth-box">
-            <h2 class="logo">Verify IUB</h2>
-            <div id="email-step">
-                <input type="email" id="iub-email" placeholder="name@iub.edu.bd">
-                <button onclick="sendCode()">Send Code</button>
+            <h1 class="logo-text">VOID</h1>
+            <p class="subtitle">Access restricted to IUB students</p>
+            <div id="step-1">
+                <input type="email" id="email" class="glossy-input" placeholder="student@iub.edu.bd">
+                <button onclick="sendCode()" class="glossy-btn">Request Access</button>
             </div>
-            <div id="code-step" style="display:none;">
-                <input type="text" id="verify-code" placeholder="6-digit code">
-                <button onclick="verifyCode()">Verify & Enter</button>
+            <div id="step-2" style="display:none">
+                <input type="text" id="code" class="glossy-input" placeholder="6-digit code">
+                <button onclick="verifyCode()" class="glossy-btn">Verify Identity</button>
             </div>
         </div>
     </div>
 
-    <div class="glow"></div>
-    <div class="container">
-        <div class="logo">AnonTalk</div>
-        <div class="glass-card">
-            <textarea id="box" placeholder="Share anonymously..." maxlength="500"></textarea>
+    <div id="feed-view" class="view container" style="display:none">
+        <div class="logo-header">VOID</div>
+        
+        <div class="glass-card compose-card">
+            <textarea id="post-box" placeholder="What is the secret?" maxlength="500"></textarea>
             <div class="card-ft">
-                <span id="chars">0/500</span>
-                <button onclick="sendPost()">Post</button>
+                <span id="char-count">0/500</span>
+                <button onclick="createPost()" class="glossy-btn">Anonymize</button>
             </div>
         </div>
-        <div id="notif-section" class="notif-container" style="display:none;">
-            <div class="notif-header">Notifications <span class="clear-btn" onclick="clearNotifs()">Clear</span></div>
+
+        <div id="notif-bar" class="glass-card notif-bar" style="display:none">
+            <div class="nb-header">Recent Replies <span onclick="clearNotifs()">×</span></div>
             <div id="notif-list"></div>
         </div>
-        <div class="tabs">
-            <button class="t-btn active" onclick="setTab('new', this)">New</button>
-            <button class="t-btn" onclick="setTab('hot', this)">Hot</button>
-            <button class="t-btn" onclick="setTab('old', this)">Old</button>
+
+        <div class="tab-bar">
+            <button class="t-btn active" onclick="setTab('new', this)">Latest</button>
+            <button class="t-btn" onclick="setTab('hot', this)">Trending</button>
+            <button class="t-btn" onclick="setTab('old', this)">Voided</button>
         </div>
-        <div id="feed"></div>
+
+        <div id="feed-list"></div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
