@@ -9,46 +9,44 @@
 <body>
     <div class="mesh-bg"></div>
 
-    <div id="auth-view" class="view auth-overlay">
+    <div id="auth-overlay" class="auth-overlay">
         <div class="glass-card auth-box">
-            <h1 class="logo-text">VOID</h1>
-            <p class="subtitle">Access restricted to IUB students</p>
+            <h1 class="logo-main">VOID</h1>
+            <p style="color:#777; margin-bottom:30px">Enter IUB Email to Access</p>
             <div id="step-1">
-                <input type="email" id="email" class="glossy-input" placeholder="student@iub.edu.bd">
-                <button onclick="sendCode()" class="glossy-btn">Request Access</button>
+                <input type="email" id="email-input" class="glossy-input" placeholder="student@iub.edu.bd">
+                <button onclick="sendCode()" class="glossy-btn">Get Code</button>
             </div>
             <div id="step-2" style="display:none">
-                <input type="text" id="code" class="glossy-input" placeholder="6-digit code">
-                <button onclick="verifyCode()" class="glossy-btn">Verify Identity</button>
+                <input type="text" id="code-input" class="glossy-input" placeholder="6-digit code">
+                <button onclick="verifyCode()" class="glossy-btn">Verify Access</button>
             </div>
         </div>
     </div>
 
-    <div id="feed-view" class="view container" style="display:none">
-        <div class="logo-header">VOID</div>
+    <div id="main-feed" class="container" style="display:none">
+        <div class="logo-sm">VOID</div>
         
-        <div class="glass-card compose-card">
-            <textarea id="post-box" placeholder="What is the secret?" maxlength="500"></textarea>
+        <div class="glass-card compose">
+            <textarea id="post-box" placeholder="What's on your mind?"></textarea>
             <div class="card-ft">
-                <span id="char-count">0/500</span>
-                <button onclick="createPost()" class="glossy-btn">Anonymize</button>
+                <button onclick="createPost()" class="glossy-btn-sm">Post Anonymously</button>
             </div>
         </div>
 
-        <div id="notif-bar" class="glass-card notif-bar" style="display:none">
-            <div class="nb-header">Recent Replies <span onclick="clearNotifs()">×</span></div>
-            <div id="notif-list"></div>
+        <div id="notif-bar" class="glass-card notif-box" style="display:none">
+            <div class="notif-header">Notifications <span onclick="clearNotifs()">×</span></div>
+            <div id="notif-content"></div>
         </div>
 
-        <div class="tab-bar">
+        <div class="tabs">
             <button class="t-btn active" onclick="setTab('new', this)">Latest</button>
-            <button class="t-btn" onclick="setTab('hot', this)">Trending</button>
-            <button class="t-btn" onclick="setTab('old', this)">Voided</button>
+            <button class="t-btn" onclick="setTab('hot', this)">Hot</button>
+            <button class="t-btn" onclick="setTab('old', this)">History</button>
         </div>
 
         <div id="feed-list"></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
