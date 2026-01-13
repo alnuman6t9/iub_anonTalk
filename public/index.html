@@ -2,169 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anon Talk</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;800&display=swap" rel="stylesheet">
+    <title>VOID | IUB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #a78bfa; --bg: #020202; --card: rgba(255, 255, 255, 0.03); }
-        body { background: var(--bg); color: #efefef; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow-x: hidden; }
-        
-        /* Background Mesh Effect */
-        .mesh { position: fixed; inset: 0; z-index: -1; background: radial-gradient(at 0% 0%, rgba(167,139,250,0.15), transparent 50%), radial-gradient(at 100% 100%, rgba(59,130,246,0.1), transparent 50%); }
-
-        .glass { background: var(--card); backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; }
-        
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 550px; margin: auto; padding: 60px 20px; }
-        
-        .logo { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; text-align: center; margin-bottom: 20px; background: linear-gradient(#fff, #444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        input, textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 16px; color: #fff; margin-bottom: 12px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
-
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: 0; font-weight: 800; cursor: pointer; background: #fff; color: #000; transition: 0.3s; }
-        .btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(167,139,250,0.2); }
-
-        .post { margin-top: 30px; padding: 30px; animation: slideUp 0.6s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .reply-card { margin-top: 15px; padding: 12px 18px; background: rgba(255,255,255,0.02); border-radius: 14px; border-left: 3px solid var(--accent); font-size: 0.95rem; color: #aaa; }
-        
-        #notif { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 14px 30px; border-radius: 50px; font-weight: 800; display: none; box-shadow: 0 10px 40px rgba(167,139,250,0.4); z-index: 2000; }
-        
-        .meta { display: flex; gap: 20px; font-size: 0.85rem; color: #555; margin-top: 20px; font-weight: 800; }
-        .meta span { cursor: pointer; transition: 0.2s; }
-        .meta span:hover { color: var(--accent); }
+        :root { --p: #a78bfa; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 500px; margin: auto; padding: 40px 20px; }
+        .logo { font-size: 3rem; font-weight: 900; letter-spacing: -3px; text-align: center; margin-bottom: 20px; background: linear-gradient(#fff, #444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 12px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 15px; border-radius: 12px; border: 0; font-weight: 800; cursor: pointer; background: #fff; transition: 0.3s; }
+        button:hover { background: var(--p); color: #fff; }
+        .post { margin-top: 25px; padding: 25px; }
+        .meta { font-size: 0.8rem; color: #444; margin-top: 15px; }
+        .meta span { cursor: pointer; margin-right: 15px; }
+        .meta span:hover { color: var(--p); }
+        #notif { position: fixed; bottom: 20px; right: 20px; background: var(--p); color: #000; padding: 15px 25px; border-radius: 50px; font-weight: 800; display: none; z-index: 1000; }
     </style>
 </head>
 <body>
-    <div class="mesh"></div>
-    <div id="notif">New Reply Detected! 🌌</div>
+    <div id="notif">✨ New Reply!</div>
 
-    <div id="login-box" class="overlay">
-        <div class="glass" style="padding: 50px; width: 340px;">
-            <div class="logo">AnonTalk</div>
-            <p style="text-align:center; color:#555; font-size:0.9rem; margin-bottom:25px;">Only @iub.edu.bd access</p>
+    <div id="login-screen" class="overlay">
+        <div class="glass" style="padding: 40px; width: 320px;">
+            <div class="logo">VOID</div>
             <input type="email" id="email" placeholder="student@iub.edu.bd">
-            <button class="btn" onclick="auth()">Access Feed</button>
+            <button onclick="login()">Enter</button>
         </div>
     </div>
 
     <div id="app" class="container" style="display:none">
-        <div class="logo" style="font-size: 1.8rem; text-align: left; margin-bottom: 40px;">AnonTalk</div>
-        
-        <div class="glass" style="padding: 25px; margin-bottom: 40px;">
-            <textarea id="post-input" placeholder="Whisper something to the void..."></textarea>
-            <button class="btn" onclick="sendPost()">Post Anonymously</button>
+        <div class="logo" style="font-size: 1.5rem; text-align: left;">VOID</div>
+        <div class="glass" style="padding: 20px;">
+            <textarea id="msg" placeholder="What's on your mind?"></textarea>
+            <button onclick="submitPost()">Post Anonymously</button>
         </div>
-
         <div id="feed"></div>
     </div>
 
     <script>
-        // Local state for ID and Auth
         let uid = localStorage.getItem('v_uid') || 'u_' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('v_uid', uid);
 
         if (localStorage.getItem('v_auth')) {
-            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            sync();
+            load();
         }
 
-        function auth() {
-            const mail = document.getElementById('email').value.toLowerCase();
-            if (mail.endsWith('@iub.edu.bd')) {
+        function login() {
+            const email = document.getElementById('email').value.toLowerCase();
+            if (email.endsWith('@iub.edu.bd')) {
                 localStorage.setItem('v_auth', 'true');
                 location.reload();
-            } else {
-                alert("Please use your IUB student email.");
-            }
+            } else { alert("IUB Mail Only!"); }
         }
 
-        async function sync() {
+        async function load() {
             const res = await fetch('/api/posts');
-            const data = await res.json();
+            const posts = await res.json();
             
-            // Notification Check (Local)
+            // Notification logic
             const myPosts = JSON.parse(localStorage.getItem('my_p') || '[]');
-            data.forEach(p => {
-                if (p.author_id === uid) {
-                    const known = localStorage.getItem('seen_' + p.id) || 0;
-                    if (p.replies.length > known) {
-                        toast();
+            posts.forEach(p => {
+                if (myPosts.includes(p.id)) {
+                    const lastCount = localStorage.getItem('seen_' + p.id) || 0;
+                    if (p.replies.length > lastCount) {
+                        document.getElementById('notif').style.display = 'block';
                         localStorage.setItem('seen_' + p.id, p.replies.length);
                     }
                 }
             });
 
-            document.getElementById('feed').innerHTML = data.map(p => `
+            document.getElementById('feed').innerHTML = posts.map(p => `
                 <div class="glass post">
-                    <div style="font-weight:300; line-height:1.7; font-size:1.1rem;">${p.content}</div>
+                    <p>${p.content}</p>
                     <div class="meta">
-                        <span onclick="react(${p.id})">♥ ${p.likes}</span>
-                        <span onclick="toggleRep(${p.id})">Reply</span>
-                        <span onclick="remove(${p.id})" style="color:#222">Delete</span>
+                        <span onclick="like(${p.id})">♥ ${p.likes}</span>
+                        <span onclick="showRep(${p.id})">Reply</span>
+                        <span onclick="del(${p.id})">Admin</span>
                     </div>
-                    <div id="re-ui-${p.id}" style="display:none; margin-top:20px;">
+                    <div id="re-ui-${p.id}" style="display:none; margin-top:15px;">
                         <input type="text" id="in-${p.id}" placeholder="Your reply...">
-                        <button class="btn" style="padding:10px; font-size:0.8rem;" onclick="sendRep(${p.id})">Send</button>
+                        <button style="padding:8px" onclick="sendRep(${p.id})">Reply</button>
                     </div>
-                    ${p.replies.map(r => `<div class="reply-card">↳ ${r.content}</div>`).join('')}
+                    ${p.replies.map(r => `<div style="margin-top:10px; padding-left:10px; border-left:1px solid var(--p); color:#888; font-size:0.9rem;">↳ ${r.content}</div>`).join('')}
                 </div>
             `).join('');
         }
 
-        function toast() {
-            const t = document.getElementById('notif');
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 5000);
-        }
-
-        async function sendPost() {
-            const val = document.getElementById('post-input').value;
-            if(!val) return;
+        async function submitPost() {
+            const content = document.getElementById('msg').value;
+            if(!content) return;
             const res = await fetch('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: val, authorId: uid })
+                body: JSON.stringify({ content, authorId: uid })
             });
-            const post = await res.json();
-            let my = JSON.parse(localStorage.getItem('my_p') || '[]');
-            my.push(post.id);
-            localStorage.setItem('my_p', JSON.stringify(my));
-            document.getElementById('post-input').value = '';
-            sync();
+            const data = await res.json();
+            if(data.id) {
+                let my = JSON.parse(localStorage.getItem('my_p') || '[]');
+                my.push(data.id);
+                localStorage.setItem('my_p', JSON.stringify(my));
+                document.getElementById('msg').value = '';
+                load();
+            }
         }
 
-        function toggleRep(id) {
-            const el = document.getElementById('re-ui-' + id);
-            el.style.display = el.style.display === 'none' ? 'block' : 'none';
-        }
+        function showRep(id) { document.getElementById('re-ui-'+id).style.display = 'block'; }
 
         async function sendRep(id) {
-            const content = document.getElementById('in-' + id).value;
+            const content = document.getElementById('in-'+id).value;
             await fetch(`/api/posts/${id}/reply`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content })
             });
-            sync();
+            load();
         }
 
-        async function react(id) {
-            if (localStorage.getItem('liked_' + id)) return;
+        async function like(id) {
+            if(localStorage.getItem('l_'+id)) return;
             await fetch(`/api/posts/${id}/like`, { method: 'POST' });
-            localStorage.setItem('liked_' + id, 'true');
-            sync();
+            localStorage.setItem('l_'+id, 'true');
+            load();
         }
 
-        async function remove(id) {
-            const pw = prompt("Admin Credentials Required:");
+        async function del(id) {
+            const pw = prompt("Admin PW:");
             const res = await fetch(`/api/posts/${id}`, { method: 'DELETE', headers: { 'adminpw': pw } });
-            if (res.ok) sync(); else alert("Access Denied");
+            if(res.ok) load();
         }
 
-        setInterval(sync, 15000); // Pulse every 15s
+        setInterval(load, 10000);
     </script>
 </body>
 </html>
