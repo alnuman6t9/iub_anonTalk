@@ -2,154 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOID | IUB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&display=swap" rel="stylesheet">
+    <title>Anon Talk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;800&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #a78bfa; --bg: #050505; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
-        .overlay { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; align-items: center; justify-content: center; }
-        .container { max-width: 500px; margin: auto; padding: 40px 20px; }
-        .logo { font-size: 3rem; font-weight: 900; letter-spacing: -3px; text-align: center; margin-bottom: 10px; background: linear-gradient(#fff, #555); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input, textarea { width: 100%; background: #111; border: 1px solid #222; padding: 15px; border-radius: 12px; color: #fff; margin-bottom: 10px; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 15px; border-radius: 12px; border: 0; font-weight: 800; cursor: pointer; background: #fff; transition: 0.3s; }
-        button:hover { background: var(--p); color: #fff; }
-        .post { margin-top: 25px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        .reply-box { margin-top: 15px; padding-left: 15px; border-left: 2px solid var(--p); color: #888; font-size: 0.9rem; }
-        /* Notification Toast */
-        #notif { position: fixed; bottom: 20px; right: 20px; background: var(--p); color: #000; padding: 15px 25px; border-radius: 50px; font-weight: 800; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(167,139,250,0.4); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes pop { from { transform: scale(0.5) translateY(50px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        :root { --accent: #a78bfa; --bg: #020202; --card: rgba(255, 255, 255, 0.03); }
+        body { background: var(--bg); color: #efefef; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; overflow-x: hidden; }
+        
+        /* Background Mesh Effect */
+        .mesh { position: fixed; inset: 0; z-index: -1; background: radial-gradient(at 0% 0%, rgba(167,139,250,0.15), transparent 50%), radial-gradient(at 100% 100%, rgba(59,130,246,0.1), transparent 50%); }
+
+        .glass { background: var(--card); backdrop-filter: blur(25px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; }
+        
+        .overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 550px; margin: auto; padding: 60px 20px; }
+        
+        .logo { font-size: 3.5rem; font-weight: 800; letter-spacing: -3px; text-align: center; margin-bottom: 20px; background: linear-gradient(#fff, #444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        input, textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 16px; color: #fff; margin-bottom: 12px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: 0; font-weight: 800; cursor: pointer; background: #fff; color: #000; transition: 0.3s; }
+        .btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(167,139,250,0.2); }
+
+        .post { margin-top: 30px; padding: 30px; animation: slideUp 0.6s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .reply-card { margin-top: 15px; padding: 12px 18px; background: rgba(255,255,255,0.02); border-radius: 14px; border-left: 3px solid var(--accent); font-size: 0.95rem; color: #aaa; }
+        
+        #notif { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 14px 30px; border-radius: 50px; font-weight: 800; display: none; box-shadow: 0 10px 40px rgba(167,139,250,0.4); z-index: 2000; }
+        
+        .meta { display: flex; gap: 20px; font-size: 0.85rem; color: #555; margin-top: 20px; font-weight: 800; }
+        .meta span { cursor: pointer; transition: 0.2s; }
+        .meta span:hover { color: var(--accent); }
     </style>
 </head>
 <body>
-    <div id="notif">New Reply in the Void! 🌌</div>
+    <div class="mesh"></div>
+    <div id="notif">New Reply Detected! 🌌</div>
 
-    <div id="login-screen" class="overlay">
-        <div class="glass" style="padding: 40px; width: 320px;">
-            <div class="logo">VOID</div>
-            <p style="text-align:center; color:#555; font-size:0.8rem; margin-bottom:20px;">Enter your IUB email to proceed</p>
+    <div id="login-box" class="overlay">
+        <div class="glass" style="padding: 50px; width: 340px;">
+            <div class="logo">AnonTalk</div>
+            <p style="text-align:center; color:#555; font-size:0.9rem; margin-bottom:25px;">Only @iub.edu.bd access</p>
             <input type="email" id="email" placeholder="student@iub.edu.bd">
-            <button onclick="login()">Enter</button>
+            <button class="btn" onclick="auth()">Access Feed</button>
         </div>
     </div>
 
-    <div id="main-app" class="container" style="display:none">
-        <div class="logo" style="font-size: 1.5rem; text-align: left;">VOID</div>
-        <div class="glass" style="padding: 20px;">
-            <textarea id="post-input" placeholder="What's the tea at IUB?"></textarea>
-            <button onclick="createPost()">Post Anonymously</button>
+    <div id="app" class="container" style="display:none">
+        <div class="logo" style="font-size: 1.8rem; text-align: left; margin-bottom: 40px;">AnonTalk</div>
+        
+        <div class="glass" style="padding: 25px; margin-bottom: 40px;">
+            <textarea id="post-input" placeholder="Whisper something to the void..."></textarea>
+            <button class="btn" onclick="sendPost()">Post Anonymously</button>
         </div>
+
         <div id="feed"></div>
     </div>
 
     <script>
-        // Use a unique ID to track user's posts for notifications
-        let userId = localStorage.getItem('void_user_id') || 'user_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('void_user_id', userId);
+        // Local state for ID and Auth
+        let uid = localStorage.getItem('v_uid') || 'u_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('v_uid', uid);
 
-        if (localStorage.getItem('void_logged_in')) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            loadFeed();
+        if (localStorage.getItem('v_auth')) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            sync();
         }
 
-        function login() {
-            const email = document.getElementById('email').value.toLowerCase();
-            if (email.endsWith('@iub.edu.bd')) {
-                localStorage.setItem('void_logged_in', 'true');
+        function auth() {
+            const mail = document.getElementById('email').value.toLowerCase();
+            if (mail.endsWith('@iub.edu.bd')) {
+                localStorage.setItem('v_auth', 'true');
                 location.reload();
             } else {
-                alert("Only @iub.edu.bd emails are allowed.");
+                alert("Please use your IUB student email.");
             }
         }
 
-        async function loadFeed() {
+        async function sync() {
             const res = await fetch('/api/posts');
-            const posts = await res.json();
+            const data = await res.json();
             
-            // Notification Logic: Check if any post owned by current user has new replies
-            const myPosts = JSON.parse(localStorage.getItem('my_posts') || '[]');
-            posts.forEach(p => {
-                if (p.author_id === userId) {
-                    const lastSeenCount = localStorage.getItem('replies_' + p.id) || 0;
-                    if (p.replies.length > lastSeenCount) {
-                        showNotification();
-                        localStorage.setItem('replies_' + p.id, p.replies.length);
+            // Notification Check (Local)
+            const myPosts = JSON.parse(localStorage.getItem('my_p') || '[]');
+            data.forEach(p => {
+                if (p.author_id === uid) {
+                    const known = localStorage.getItem('seen_' + p.id) || 0;
+                    if (p.replies.length > known) {
+                        toast();
+                        localStorage.setItem('seen_' + p.id, p.replies.length);
                     }
                 }
             });
 
-            document.getElementById('feed').innerHTML = posts.map(p => `
+            document.getElementById('feed').innerHTML = data.map(p => `
                 <div class="glass post">
-                    <p style="font-weight:300;">${p.content}</p>
-                    <div style="font-size:0.8rem; color:#444; margin-top:15px;">
-                        <span onclick="like(${p.id})" style="cursor:pointer">♥ ${p.likes}</span> | 
-                        <span onclick="toggleReply(${p.id})" style="cursor:pointer">Reply</span> | 
-                        <span onclick="adminDelete(${p.id})" style="color:#333; cursor:pointer">Admin</span>
+                    <div style="font-weight:300; line-height:1.7; font-size:1.1rem;">${p.content}</div>
+                    <div class="meta">
+                        <span onclick="react(${p.id})">♥ ${p.likes}</span>
+                        <span onclick="toggleRep(${p.id})">Reply</span>
+                        <span onclick="remove(${p.id})" style="color:#222">Delete</span>
                     </div>
-                    <div id="reply-ui-${p.id}" style="display:none; margin-top:10px;">
-                        <input type="text" id="input-${p.id}" placeholder="Type reply...">
-                        <button onclick="sendReply(${p.id})" style="padding:8px">Reply</button>
+                    <div id="re-ui-${p.id}" style="display:none; margin-top:20px;">
+                        <input type="text" id="in-${p.id}" placeholder="Your reply...">
+                        <button class="btn" style="padding:10px; font-size:0.8rem;" onclick="sendRep(${p.id})">Send</button>
                     </div>
-                    ${p.replies.map(r => `<div class="reply-box">↳ ${r.content}</div>`).join('')}
+                    ${p.replies.map(r => `<div class="reply-card">↳ ${r.content}</div>`).join('')}
                 </div>
             `).join('');
         }
 
-        function showNotification() {
-            const toast = document.getElementById('notif');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 5000);
+        function toast() {
+            const t = document.getElementById('notif');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 5000);
         }
 
-        async function createPost() {
-            const content = document.getElementById('post-input').value;
-            if (!content) return;
+        async function sendPost() {
+            const val = document.getElementById('post-input').value;
+            if(!val) return;
             const res = await fetch('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, authorId: userId })
+                body: JSON.stringify({ content: val, authorId: uid })
             });
-            const newPost = await res.json();
-            
-            // Track this post to know when it gets replies
-            let myPosts = JSON.parse(localStorage.getItem('my_posts') || '[]');
-            myPosts.push(newPost.id);
-            localStorage.setItem('my_posts', JSON.stringify(myPosts));
-            
+            const post = await res.json();
+            let my = JSON.parse(localStorage.getItem('my_p') || '[]');
+            my.push(post.id);
+            localStorage.setItem('my_p', JSON.stringify(my));
             document.getElementById('post-input').value = '';
-            loadFeed();
+            sync();
         }
 
-        function toggleReply(id) {
-            const el = document.getElementById('reply-ui-' + id);
+        function toggleRep(id) {
+            const el = document.getElementById('re-ui-' + id);
             el.style.display = el.style.display === 'none' ? 'block' : 'none';
         }
 
-        async function sendReply(id) {
-            const content = document.getElementById('input-' + id).value;
+        async function sendRep(id) {
+            const content = document.getElementById('in-' + id).value;
             await fetch(`/api/posts/${id}/reply`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content })
             });
-            loadFeed();
+            sync();
         }
 
-        async function like(id) {
+        async function react(id) {
             if (localStorage.getItem('liked_' + id)) return;
             await fetch(`/api/posts/${id}/like`, { method: 'POST' });
             localStorage.setItem('liked_' + id, 'true');
-            loadFeed();
+            sync();
         }
 
-        async function adminDelete(id) {
-            const pw = prompt("Admin Password:");
+        async function remove(id) {
+            const pw = prompt("Admin Credentials Required:");
             const res = await fetch(`/api/posts/${id}`, { method: 'DELETE', headers: { 'adminpw': pw } });
-            if (res.ok) loadFeed(); else alert("Unauthorized");
+            if (res.ok) sync(); else alert("Access Denied");
         }
 
-        setInterval(loadFeed, 10000); // Auto refresh every 10s
+        setInterval(sync, 15000); // Pulse every 15s
     </script>
 </body>
 </html>
