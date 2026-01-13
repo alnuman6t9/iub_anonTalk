@@ -1,55 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnonTalk IUB</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="mesh-bg"></div>
 
+    <!-- AUTH OVERLAY -->
     <div id="auth-overlay" class="auth-overlay">
         <div class="glass-card auth-box">
             <h1 class="logo-main">AnonTalk</h1>
-            <p style="color:#777; margin-bottom:30px">Enter IUB Email to Access</p>
-            <div id="step-1">
-                <input type="email" id="email-input" class="glossy-input" placeholder="student@iub.edu.bd">
-                <button onclick="sendCode()" class="glossy-btn">Get Code</button>
-            </div>
-            <div id="step-2" style="display:none">
-                <input type="text" id="code-input" class="glossy-input" placeholder="6-digit code">
-                <button onclick="verifyCode()" class="glossy-btn">Verify Access</button>
-            </div>
+            <p style="color:#777;margin-bottom:30px">
+                Access only for IUB students
+            </p>
+
+            <input
+                type="email"
+                id="email-input"
+                class="glossy-input"
+                placeholder="student@iub.edu.bd"
+            >
+
+            <button onclick="login()" class="glossy-btn">
+                Enter Anonymously
+            </button>
+
+            <p style="margin-top:15px;font-size:12px;color:#444">
+                No password • No tracking • Anonymous
+            </p>
         </div>
     </div>
 
+    <!-- MAIN FEED -->
     <div id="main-feed" class="container" style="display:none">
-        <div class="logo-sm">VOID</div>
-        
+
+        <div class="logo-sm">AnonTalk</div>
+
+        <!-- COMPOSE -->
         <div class="glass-card compose">
             <textarea id="post-box" placeholder="What's on your mind?"></textarea>
             <div class="card-ft">
-                <button onclick="createPost()" class="glossy-btn-sm">Post Anonymously</button>
+                <button onclick="createPost()" class="glossy-btn-sm">
+                    Post Anonymously
+                </button>
             </div>
         </div>
 
+        <!-- NOTIFICATIONS -->
         <div id="notif-bar" class="glass-card notif-box" style="display:none">
-            <div class="notif-header">Notifications <span onclick="clearNotifs()">×</span></div>
+            <div class="notif-header">
+                Notifications
+                <span onclick="clearNotifs()">×</span>
+            </div>
             <div id="notif-content"></div>
         </div>
 
+        <!-- TABS -->
         <div class="tabs">
             <button class="t-btn active" onclick="setTab('new', this)">Latest</button>
             <button class="t-btn" onclick="setTab('hot', this)">Hot</button>
             <button class="t-btn" onclick="setTab('old', this)">History</button>
         </div>
 
+        <!-- FEED -->
         <div id="feed-list"></div>
+
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
