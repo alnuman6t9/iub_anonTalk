@@ -2,59 +2,61 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Inner Peace</title>
+  <title>Inner Peace – Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ADMIN LOGIN -->
-<!-- LOGIN OVERLAY -->
-<div id="login-overlay" class="overlay">
-  <div class="card login-card">
-    <h2>Welcome to Inner Peace</h2>
-    <p class="tagline">We hear. We don’t judge. We suggest.</p>
+<div class="page">
+  <!-- LEFT SIDE -->
+  <div class="left">
+    <div class="sun">☀️</div>
+    <h1>Find Your<br><span>Inner Peace</span></h1>
 
-    <!-- MEMBER LOGIN -->
-    <div id="member-login">
-      <input
-        type="text"
-        id="nickname"
-        placeholder="Enter a nickname"
-      />
-      <button onclick="loginMember()">Continue</button>
-    </div>
+    <blockquote>
+      “The best way to cheer yourself is to try to cheer someone else up.”
+    </blockquote>
 
-    <hr style="margin:20px 0; opacity:.2">
-
-    <!-- ADMIN LOGIN -->
-    <div id="admin-login">
-      <input
-        type="password"
-        id="admin-pw"
-        placeholder="Admin password"
-      />
-      <button onclick="loginAdmin()">Admin Login</button>
-    </div>
-  </div>
-</div>
-
-<div class="bg-glow"></div>
-
-<div class="container">
-  <h1 class="logo">Inner Peace</h1>
-  <p class="tagline">We hear. We don’t judge. We suggest.</p>
-
-  <div class="card">
-    <textarea id="postBox" placeholder="Share your thoughts, problems, or questions freely..."></textarea>
-    <button onclick="sendPost()">Share</button>
+    <p class="sub">
+      Join a community where we hear, don’t judge, and suggest kindly.
+    </p>
   </div>
 
-  <div id="feed"></div>
+  <!-- RIGHT SIDE -->
+  <div class="right">
+    <div class="card">
+      <h2>Welcome</h2>
+      <p class="muted">Enter your details to join the circle</p>
+
+      <!-- TOGGLE -->
+      <div class="toggle">
+        <button id="memberBtn" class="active" onclick="setMode('member')">Member</button>
+        <button id="adminBtn" onclick="setMode('admin')">Admin</button>
+      </div>
+
+      <!-- MEMBER LOGIN -->
+      <div id="memberBox">
+        <label>Nickname</label>
+        <input type="text" id="nickname" placeholder="e.g. PeacefulPanda">
+        <button class="primary" onclick="loginMember()">Enter with Peace</button>
+      </div>
+
+      <!-- ADMIN LOGIN -->
+      <div id="adminBox" style="display:none">
+        <label>Admin Password</label>
+        <input type="password" id="adminPw" placeholder="Admin password">
+        <button class="primary" onclick="loginAdmin()">Login as Admin</button>
+      </div>
+
+      <p class="footer">
+        By entering, you agree to be kind and non-judgmental.
+      </p>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
-
