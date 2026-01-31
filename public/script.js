@@ -1,70 +1,37 @@
-let isAdmin = false;
+let mode = "member";
 
-async function loadPosts() {
-  const res = await fetch("/api/posts");
-  const posts = await res.json();
+function setMode(m) {
+  mode = m;
+  document.getElementById("memberBtn").classList.toggle("active", m === "member");
+  document.getElementById("adminBtn").classList.toggle("active", m === "admin");
 
-  document.getElementById("feed").innerHTML = posts.map(p => `
-    <div class="card">
-      <p>${p.content}</p>
-
-      ${p.suggestions.map(s => `
-        <div class="suggestion ${s.by_admin ? 'admin' : ''}">
-          💬 ${s.content} ${s.by_admin ? '(Admin)' : ''}
-        </div>
-      `).join("")}
-
-      <input placeholder="Write a supportive suggestion..."
-        onkeydown="if(event.key==='Enter') suggest(${p.id}, this)" />
-
-      ${isAdmin ? `<button onclick="deletePost(${p.id})">Delete</button>` : ""}
-    </div>
-  `).join("");
+  document.getElementById("memberBox").style.display = m === "member" ? "block" : "none";
+  document.getElementById("adminBox").style.display = m === "admin" ? "block" : "none";
 }
 
-async function sendPost() {
-  const box = document.getElementById("postBox");
-  if (!box.value) return;
+/* MEMBER LOGIN */
+function loginMember() {
+  const nick = document.getElementById("nickname").value.trim();
+  if (!nick) {
+    alert("Please enter a nickname");
+    return;
+  }
 
-  await fetch("/api/posts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content: box.value })
-  });
+  localStorage.setItem("nickname", nick);
+  localStorage.setItem("role", "member");
 
-  box.value = "";
-  loadPosts();
+  // redirect to app
+  window.location.href = "/app.html";
 }
 
-async function suggest(id, el) {
-  await fetch(`/api/posts/${id}/suggest`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: el.value,
-      admin: isAdmin
-    })
-  });
-  el.value = "";
-  loadPosts();
-}
-
+/* ADMIN LOGIN */
 function loginAdmin() {
-  const pw = document.getElementById("admin-pw").value;
-  if (pw === "Nom@n123") {
-    isAdmin = true;
-    document.getElementById("admin-login").style.display = "none";
-    loadPosts();
-  } else alert("Wrong password");
-}
+  const pw = document.getElementById("adminPw").value;
+  if (pw !== "Nom@n123") {
+    alert("Wrong admin password");
+    return;
+  }
 
-async function deletePost(id) {
-  await fetch(`/api/posts/${id}/delete`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password: "Nom@n123" })
-  });
-  loadPosts();
+  localStorage.setItem("role", "admin");
+  window.location.href = "/app.html";
 }
-
-loadPosts();
