@@ -10,11 +10,33 @@
 <body>
 
 <!-- ADMIN LOGIN -->
-<div id="admin-login" class="overlay">
-  <div class="card">
-    <h2>Admin Login</h2>
-    <input type="password" id="admin-pw" placeholder="Admin password" />
-    <button onclick="loginAdmin()">Login</button>
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay" class="overlay">
+  <div class="card login-card">
+    <h2>Welcome to Inner Peace</h2>
+    <p class="tagline">We hear. We don’t judge. We suggest.</p>
+
+    <!-- MEMBER LOGIN -->
+    <div id="member-login">
+      <input
+        type="text"
+        id="nickname"
+        placeholder="Enter a nickname"
+      />
+      <button onclick="loginMember()">Continue</button>
+    </div>
+
+    <hr style="margin:20px 0; opacity:.2">
+
+    <!-- ADMIN LOGIN -->
+    <div id="admin-login">
+      <input
+        type="password"
+        id="admin-pw"
+        placeholder="Admin password"
+      />
+      <button onclick="loginAdmin()">Admin Login</button>
+    </div>
   </div>
 </div>
 
@@ -35,3 +57,4 @@
 <script src="script.js"></script>
 </body>
 </html>
+
